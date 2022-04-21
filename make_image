@@ -1,0 +1,25 @@
+#!/usr/bin/guestfish -f
+# Undersize the image for 2GB as SD cards can be weird sizes
+sparse /output/image.img 2000M
+run
+
+# Partition the image
+# Sizes in 512k sectors
+part-init /dev/sda mbr
+# 256MB for boot
+part-add /dev/sda p 1 524288
+# And the rest for root
+part-add /dev/sda p 524289 -1
+
+# Setup the file systems
+# TODO usually the fat size is forced for mkfs but can't do that here
+mkfs fat /dev/sda1 label:boot
+mkfs ext4 /dev/sda2 label:root features:^huge_file
+
+# Add the root files
+mount /dev/sda2 /
+tar-in root.tar.xz / compress:xz xattrs:true selinux:true acls:true
+
+# Add the boot files
+mount /dev/sda1 /boot
+tar-in boot.tar.xz /boot compress:xz xattrs:true selinux:true acls:true

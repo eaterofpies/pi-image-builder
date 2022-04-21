@@ -1,0 +1,19 @@
+version: '3'
+services:
+  pi-image-builder:
+    # needed for mounting loopback devices while building the image
+    # privileged: True
+    container_name: pi-image-builder
+    image: pi-image-builder:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        IMAGE_HOST_NAME: ${IMAGE_HOST_NAME:-pi}
+        # Setup for remote access.
+        # TODO Could I just randomise the password?
+        IMAGE_USER: ${IMAGE_USER:-pi}
+        IMAGE_PASS: ${IMAGE_PASS:-raspberry}
+    volumes:
+      #- /dev/:/dev/
+      - ./images/:/output/
