@@ -17,6 +17,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     libguestfs-tools \
     linux-image-generic \
+    qemu-user-static \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
@@ -26,7 +27,7 @@ COPY --from=files /downloads/root.tar.xz /files
 
 WORKDIR /files
 COPY --from=files /downloads/boot.tar.xz /files
-COPY make_image /files/
+COPY make_image.sh partitions.sfdisk setup_image.gf /files/
 WORKDIR /files
 #RUN ls && /bin/false
-CMD ["./make_image"]
+CMD ["./make_image.sh"]
