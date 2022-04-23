@@ -1,4 +1,0 @@
-label: mbr
-/output/image.img1 : size=256M, type=c, bootable
-/output/image.img2 : type=83
-write

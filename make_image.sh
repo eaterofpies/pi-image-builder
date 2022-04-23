@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Clean up stale data
 rm -f /output/image.img /output/image.tmp
@@ -6,18 +6,12 @@ rm -f /output/image.img /output/image.tmp
 # Exit on error
 set -e
 
-# Guestfish can't setup the partitions correctly so do that first
-# Undersize the image for 2GB as SD cards can be weird sizes
-guestfish -x <<_EOF_
-allocate /output/image.tmp 2000M
-run
-exit
-_EOF_
-
-sfdisk /output/image.tmp < partitions.sfdisk
-
-# Use guestfish script to setup the rest of the image
+# Use a guestfish script to setup the rest of the image
 ./setup_image.gf
+
+# Overwrite the disk id
+# TODO figure out why this is necessary. (the pi won't boot if it's not set)
+printf '\x70\x28\x5A\x7D' | dd of=/output/image.tmp conv=notrunc bs=1 seek=$((0x1b8))
 
 # Move the tmp file to
 mv /output/image.tmp /output/image.img

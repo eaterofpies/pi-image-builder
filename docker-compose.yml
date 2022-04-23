@@ -1,8 +1,6 @@
 version: '3'
 services:
   pi-image-builder:
-    # needed for mounting loopback devices while building the image
-    # privileged: True
     container_name: pi-image-builder
     image: pi-image-builder:latest
     build:
@@ -15,5 +13,4 @@ services:
         IMAGE_USER: ${IMAGE_USER:-pi}
         IMAGE_PASS: ${IMAGE_PASS:-raspberry}
     volumes:
-      #- /dev/:/dev/
       - ./images/:/output/

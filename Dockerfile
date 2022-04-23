@@ -21,13 +21,13 @@ RUN apt-get update \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /files/rootfs/
-COPY --from=files /downloads/root.tar.xz /files
-#RUN tar -xf ../root.tar.xz && rm ../root.tar.xz
-
 WORKDIR /files
 COPY --from=files /downloads/boot.tar.xz /files
-COPY make_image.sh partitions.sfdisk setup_image.gf /files/
-WORKDIR /files
+RUN unxz /files/boot.tar.xz
+
+COPY --from=files /downloads/root.tar.xz /files
+RUN unxz root.tar.xz
+
+COPY make_image.sh setup_image.gf /files/
 #RUN ls && /bin/false
 CMD ["./make_image.sh"]
