@@ -10,10 +10,10 @@ sfdisk-N /dev/sda 2 0 0 0 "260M"
 # Setup the root file system
 mkfs ext4 /dev/sda2 label:root features:^huge_file
 mount /dev/sda2 /
-tar-in root.tar / xattrs:true selinux:true acls:true
+tar-in root.tar.gz / compress:gzip xattrs:true selinux:true acls:true
 
 # Add the boot files system
 mkfs fat /dev/sda1 label:boot
 mount /dev/sda1 /boot
-tar-in boot.tar /boot xattrs:true selinux:true acls:true
+tar-in boot.tar.gz /boot compress:gzip xattrs:true selinux:true acls:true
 exit
