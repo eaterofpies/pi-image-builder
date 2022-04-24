@@ -41,11 +41,13 @@ RUN mkdir /files/root \
     && tar --extract --file=/files/root.tar.xz --preserve-permissions --directory /files/root \
     && rm /files/root.tar.xz
 
-# Set the hostname up
-# TODO should I check the permissions stay the same here.
-# I have manually checked but it feels like I should automate it
-ARG IMAGE_HOSTNAME
-RUN sed -i "s/raspberrypi/${IMAGE_HOSTNAME}/" /files/root/etc/hosts /files/root/etc/hostname
+# Run custom setup if a script is present.
+COPY custom-root-files/* /files/
+RUN test ! -f "/files/custom-root-setup.sh" || proot -S /files/root -q /usr/bin/qemu-arm-static /bin/bash -c "\
+    cd /host-rootfs/files/ \
+    && chmod +x ./custom-root-setup.sh \
+    && ./custom-root-setup.sh \
+    "
 
 # Repack the fs to preserve permissions when copying into the image
 RUN tar --directory /files/root --create --preserve-permissions --gz --file /files/root.tar.gz .

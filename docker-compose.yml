@@ -6,7 +6,5 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        IMAGE_HOSTNAME: ${IMAGE_HOSTNAME:-raspberrypi}
     volumes:
       - ./images/:/output/
