@@ -35,5 +35,5 @@ A lot of the tooling for building SD card images
 - Leaves stale loopback devices on failure.
 - Leaves stale bind mounts on failure.
 - Is not safe (eg. requires running random scripts as sudo).
-- Make it hard to compare different revisions of the output image.
+- Makes it hard to compare different revisions of the image.
 - Requires a specific host OS to make the image.
