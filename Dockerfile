@@ -23,23 +23,36 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 FROM base as make_bootfs
+# Extract the fs so we can modify it
 COPY --from=files /downloads/boot.tar.xz /files/
 RUN mkdir /files/boot \
     && tar --extract --file=/files/boot.tar.xz --preserve-permissions --directory /files/boot \
     && rm /files/boot.tar.xz
 
-#TODO customise the image
+COPY extra-boot-files/* /files/boot/
 
+# Repack the fs to preserve permissions when copying into the image
 RUN tar --directory /files/boot --create --preserve-permissions --gz --file /files/boot.tar.gz .
 
 FROM base as make_rootfs
+# Extract the fs so we can modify it
 COPY --from=files /downloads/root.tar.xz /files/
 RUN mkdir /files/root \
     && tar --extract --file=/files/root.tar.xz --preserve-permissions --directory /files/root \
     && rm /files/root.tar.xz
 
-#TODO customise the image
+# Disable auto login. This is headless so that seems like a pretty reasonable thing to do.
+RUN proot -S /files/root -q /usr/bin/qemu-arm-static /bin/bash -c "\
+    systemctl --quiet set-default multi-user.target \
+    && rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf \
+    "
+# Set the hostname up
+# TODO should I check the permissions stay the same here.
+# I have manually checked but it feels like I should automate it
+ARG IMAGE_HOSTNAME
+RUN sed -i "s/raspberrypi/${IMAGE_HOSTNAME}/" /files/root/etc/hosts /files/root/etc/hostname
 
+# Repack the fs to preserve permissions when copying into the image
 RUN tar --directory /files/root --create --preserve-permissions --gz --file /files/root.tar.gz .
 
 FROM base as make_image

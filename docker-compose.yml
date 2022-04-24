@@ -7,10 +7,6 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        IMAGE_HOST_NAME: ${IMAGE_HOST_NAME:-pi}
-        # Setup for remote access.
-        # TODO Could I just randomise the password?
-        IMAGE_USER: ${IMAGE_USER:-pi}
-        IMAGE_PASS: ${IMAGE_PASS:-raspberry}
+        IMAGE_HOSTNAME: ${IMAGE_HOSTNAME:-raspberrypi}
     volumes:
       - ./images/:/output/
