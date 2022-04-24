@@ -41,11 +41,6 @@ RUN mkdir /files/root \
     && tar --extract --file=/files/root.tar.xz --preserve-permissions --directory /files/root \
     && rm /files/root.tar.xz
 
-# Disable auto login. This is headless so that seems like a pretty reasonable thing to do.
-RUN proot -S /files/root -q /usr/bin/qemu-arm-static /bin/bash -c "\
-    systemctl --quiet set-default multi-user.target \
-    && rm -f /etc/systemd/system/getty@tty1.service.d/autologin.conf \
-    "
 # Set the hostname up
 # TODO should I check the permissions stay the same here.
 # I have manually checked but it feels like I should automate it
