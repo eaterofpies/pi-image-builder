@@ -53,7 +53,7 @@ RUN tar --directory /files/root --create --preserve-permissions --gz --file /fil
 FROM base as make_image
 COPY --from=make_bootfs /files/boot.tar.gz /files/
 COPY --from=make_rootfs /files/root.tar.gz /files/
-COPY make_image.sh setup_image.gf /files/
+COPY scripts/make_image.sh scripts/setup_image.gf /files/
 
 WORKDIR /files
 CMD ["./make_image.sh"]
